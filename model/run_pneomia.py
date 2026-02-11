@@ -18,6 +18,8 @@ def parse_args():
     p.add_argument("--model_file", type=str, default="model_pnemonia.keras")  # include extension
     p.add_argument("--threshold_auc", type=float, default=0.80)         # nice to control
     p.add_argument("--action", type=str, default="do-fit")
+    p.add_argument("--gradcam_img", type=str, default=None)
+    p.add_argument("--gradcam_out", type=str, default="gradcam_overlay.png")
     return p.parse_args()
 
 
@@ -53,6 +55,27 @@ def main():
     )
 
     model.summary()
+    if args.action == "gradcam-one":
+        from pneomia_model import make_grad_model, grad_engine, display_gradcam, get_img_array  # or wherever you put them
+        import cv2
+
+        # Build the model graph (important sometimes)
+        model(tf.zeros((1, args.img_size, args.img_size, 3)))
+
+        # Make grad model + run on one image
+        grad_model = make_grad_model(model, "last_conv_layer")
+        img_array = get_img_array(args.gradcam_img, size=(args.img_size, args.img_size))
+        heatmap = grad_engine(img_array, grad_model)
+
+        original_rgb = img_array[0].astype("uint8")
+        overlay = display_gradcam(original_rgb, heatmap)
+
+        # Save
+        overlay_bgr = cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR)
+        cv2.imwrite(args.gradcam_out, overlay_bgr)
+        print("Saved:", args.gradcam_out)
+        return
+
     print("hello")
 
     early_stop = tf.keras.callbacks.EarlyStopping(
