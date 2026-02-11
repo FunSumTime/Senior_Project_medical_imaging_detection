@@ -56,24 +56,44 @@ data_augmentation = tf.keras.Sequential([
 
 import numpy as np
 
-def get_gradcam_heatmap(img_array, model, last_conv_layer_name):
-    # 1. Create the sub-model we discussed
+
+
+def make_grad_model(model, last_conv_layer_name):
     grad_model = tf.keras.models.Model(
         [model.inputs], [model.get_layer(last_conv_layer_name).output, model.output]
     )
+    return grad_model
 
-    # 2. Record the gradients
+def grad_engine(img_array, grad_model):
     with tf.GradientTape() as tape:
-        last_conv_layer_output, preds = grad_model(img_array)
-        # For binary, preds is just the score (e.g., 0.95)
-        # If we had multiple classes, we'd pick the specific class index here
-        class_channel = preds[:, 0]
+        # grab the outputs from the sub model, as the gradient wants to do the gradent with respect to the map based of the prediction
+        last_conv_layer_output, predictions = grad_model(img_array)
+        # want to grab the value of the prediction, so we go from row to row and grab the value [[0.9],[1]]...
+        class_value = predictions[:,0]
+    # take the gradient of the prediction with respect to the featuer maps
+    # for this specific pixel how does it change the overall prediction
+    grads = tape.gradient(class_value, last_conv_layer_output)
+    # Shape: (1, height, width, channels) (e.g., (1, 16, 16, 256))
 
-    # 3. This is the "magic" step: calculate gradients of the score 
-    # with respect to the feature map
-    grads = tape.gradient(class_channel, last_conv_layer_output)
-    
-    return grads, last_conv_layer_output
+    # calculate the mean(average) of the pixels to get the weight
+    pooled_grads = tf.reduce_mean(grads,axis=(0,1,2))
+    # add a new axis to do matrix multiplcation
+    pooled_grads_one = pooled_grads[...,tf.newaxis]
+
+    # multiply the image what we saw by the gradients to up them
+    heatmap = last_conv_layer_output @ pooled_grads_one
+    # get rid of the negitives
+    heatmap = tf.maximum(heatmap,0)
+    # get rid of the one axises
+    heatmap = tf.squeeze(heatmap)
+
+    # normlize the numbers to 0-1
+    # add the small number incase the whole thing was 0 so we dont divde by zero
+    heatmap /= heatmap.reduce_max(heatmap) + 1e-8
+
+    # return the heatmap numbers as a numpy so openCv can work with it.
+    return heatmap.numpy()
+
 def build_model(name: str, img_size):
     name = name.lower()
     if name == "a":
