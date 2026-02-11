@@ -14,6 +14,7 @@ train_data = tf.keras.utils.image_dataset_from_directory(
     shuffle=True
 )
 
+
 test_data = tf.keras.utils.image_dataset_from_directory(
     data_dir / "test",
     label_mode="binary",
@@ -29,6 +30,7 @@ data_bank = {
 }
 
 def grab_data(num):
+    print(data_bank[0].class_names)
     if num == 1:
         return data_bank[1]
     else:
