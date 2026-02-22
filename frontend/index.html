@@ -1,23 +1,100 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Medical Imaging Demo</title>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <form
-      action="http://localhost:5000/submit"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      <input
-        type="file"
-        name="my_image"
-        id="image_uploads"
-        accept="image/png, image/jpeg"
-      />
-      <button type="submit">Upload Image</button>
-    </form>
+    <header class="topbar">
+      <h1>Medical Imaging Detection</h1>
+      <div class="controls">
+        <button id="runBtn" class="primary" disabled>Run Model</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- Upload -->
+      <section class="card">
+        <h2>Upload</h2>
+
+        <div id="dropzone" class="dropzone">
+          <p><strong>Drag & drop</strong> an image here, or</p>
+          <label class="fileLabel">
+            Choose file
+            <input id="fileInput" type="file" accept="image/*" />
+          </label>
+        </div>
+
+        <div class="previewBlock">
+          <h3>Input Preview</h3>
+          <div class="imgFrame">
+            <img id="inputPreview" alt="Input preview" />
+            <div id="inputPlaceholder" class="placeholder">
+              No image selected
+            </div>
+          </div>
+          <div id="fileMeta" class="meta"></div>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="card">
+        <h2>Result</h2>
+
+        <div class="statusRow">
+          <div id="status" class="status idle">Idle</div>
+          <div id="latency" class="meta"></div>
+        </div>
+
+        <div class="resultRow">
+          <div class="imgCol">
+            <h3>Output Image</h3>
+            <div class="imgFrame">
+              <img id="outputPreview" alt="Output preview" />
+              <div id="outputPlaceholder" class="placeholder">
+                No result yet
+              </div>
+            </div>
+
+            <div class="btnRow">
+              <button id="downloadBtn" disabled>Download Output</button>
+            </div>
+          </div>
+
+          <div class="metricsCol">
+            <h3>Metrics</h3>
+            <pre id="metrics" class="metricsBox">{}</pre>
+
+            <!-- Future: add options here -->
+            <div class="options">
+              <h3>Options (future)</h3>
+              <div class="optionRow">
+                <label for="targetSelect">Target</label>
+                <select id="targetSelect" disabled>
+                  <option value="any">Any anomaly</option>
+                </select>
+              </div>
+              <div class="optionRow">
+                <label for="threshold">Threshold</label>
+                <input
+                  id="threshold"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="1"
+                  value="0.50"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
   </body>
 </html>
