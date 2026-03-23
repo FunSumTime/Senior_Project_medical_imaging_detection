@@ -221,7 +221,7 @@ runBtn.addEventListener("click", async () => {
 
     const data = await res.json();
 
-    metricsBox.textContent = JSON.stringify(data.metrics ?? {}, null, 2);
+    updateVisualMetrics(data.metrics);
 
     const mime = data.result_mime || "image/png";
 
@@ -269,5 +269,38 @@ runBtn.addEventListener("click", async () => {
     );
   }
 });
+
+/* ... Keep existing state variables and file logic ... */
+
+// NEW: Function to update visual bars
+function updateVisualMetrics(metrics) {
+  const probFill = document.getElementById("prob-fill");
+  const probValue = document.getElementById("prob-value");
+  const badge = document.getElementById("detection-badge");
+  const metaModel = document.getElementById("meta-model");
+  const metaLayer = document.getElementById("meta-layer");
+
+  if (!metrics || Object.keys(metrics).length === 0) return;
+
+  // 1. Update Probability Bar
+  const prob = (metrics.probability * 100).toFixed(1);
+  probFill.style.width = `${prob}%`;
+  probValue.textContent = `${prob}%`;
+
+  // Color change based on confidence
+  if (prob > 70) probFill.style.background = "var(--accent-red)";
+  else if (prob > 40) probFill.style.background = "var(--accent-orange)";
+  else probFill.style.background = "var(--accent-green)";
+
+  // 2. Update Badge
+  badge.textContent = metrics.anomaly_detected
+    ? "ANOMALY DETECTED"
+    : "CLEAR / NORMAL";
+  badge.className = `badge ${metrics.anomaly_detected ? "danger" : "success"}`;
+
+  // 3. Update Meta
+  metaModel.textContent = metrics.model || "Unknown";
+  metaLayer.textContent = metrics.cam_layer || "Default";
+}
 
 clearAll();

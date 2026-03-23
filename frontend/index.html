@@ -3,98 +3,142 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Medical Imaging Demo</title>
+    <title>MedScan AI | Medical Imaging Detection</title>
     <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <header class="topbar">
-      <h1>Medical Imaging Detection</h1>
+      <div class="logo-area">
+        <span class="logo-icon">◈</span>
+        <h1>MedScan <span>AI</span></h1>
+      </div>
       <div class="controls">
-        <button id="runBtn" class="primary" disabled>Run Model</button>
-        <button id="clearBtn">Clear</button>
+        <button id="clearBtn" class="secondary">Clear Session</button>
+        <button id="runBtn" class="primary" disabled>Run Analysis</button>
       </div>
     </header>
 
     <main class="grid">
-      <!-- Upload -->
       <section class="card">
-        <h2>Upload</h2>
+        <div class="card-header">
+          <h2>Patient Input</h2>
+          <span class="step-tag">Step 1</span>
+        </div>
 
         <div id="dropzone" class="dropzone">
-          <p><strong>Drag & drop</strong> an image here, or</p>
-          <label class="fileLabel">
-            Choose file
-            <input id="fileInput" type="file" accept="image/*" />
-          </label>
+          <div class="dz-content">
+            <p><strong>Drag & drop</strong> scan or</p>
+            <label class="fileLabel">
+              Browse Files
+              <input id="fileInput" type="file" accept="image/*" />
+            </label>
+          </div>
         </div>
 
         <div class="previewBlock">
-          <h3>Input Preview</h3>
           <div class="imgFrame">
             <img id="inputPreview" alt="Input preview" />
             <div id="inputPlaceholder" class="placeholder">
-              No image selected
+              <p>Waiting for Upload...</p>
             </div>
           </div>
           <div id="fileMeta" class="meta"></div>
         </div>
       </section>
 
-      <!-- Result -->
       <section class="card">
-        <h2>Result</h2>
+        <div class="card-header">
+          <h2>Diagnostic Results</h2>
+          <span class="step-tag">Step 2</span>
+        </div>
 
-        <div class="statusRow">
-          <div id="status" class="status idle">Idle</div>
+        <div class="status-ribbon">
+          <div id="status" class="status idle">System Idle</div>
           <div id="latency" class="meta"></div>
         </div>
 
-        <div class="resultRow">
-          <div class="imgCol">
-            <h3>Output Image</h3>
-            <div class="imgFrame">
+        <div class="result-layout">
+          <div class="output-container">
+            <div class="imgFrame main-result">
               <img id="outputPreview" alt="Output preview" />
               <div id="outputPlaceholder" class="placeholder">
-                No result yet
+                <p>Awaiting Analysis</p>
               </div>
             </div>
 
-            <div class="btnRow">
-              <button id="downloadBtn" disabled>Download Output</button>
-              <button id="showBoxBtn" disabled>Show Boxed Image</button>
-              <button id="showHeatmapBtn" disabled>Show Heatmap Image</button>
+            <div class="view-toggle">
+              <button id="showBoxBtn" class="toggle-btn" disabled>
+                Bounding Box
+              </button>
+              <button id="showHeatmapBtn" class="toggle-btn" disabled>
+                Heatmap
+              </button>
+              <button
+                id="downloadBtn"
+                class="download-icon"
+                title="Download"
+                disabled
+              >
+                ⤓
+              </button>
             </div>
           </div>
 
-          <div class="metricsCol">
-            <h3>Metrics</h3>
-            <pre id="metrics" class="metricsBox">{}</pre>
+          <div class="analysis-panel">
+            <div id="visual-metrics" class="metrics-display">
+              <div class="metric-item">
+                <label>Detection Status</label>
+                <div id="detection-badge" class="badge">N/A</div>
+              </div>
 
-            <!-- Future: add options here -->
-            <div class="options">
-              <h3>Options (future)</h3>
-              <div class="optionRow">
-                <label for="targetSelect">Target</label>
-                <select id="targetSelect" disabled>
-                  <option value="any">Any anomaly</option>
-                </select>
+              <div class="metric-item">
+                <div class="label-row">
+                  <label>Confidence Level</label>
+                  <span id="prob-value">0%</span>
+                </div>
+                <div class="progress-bar">
+                  <div
+                    id="prob-fill"
+                    class="progress-fill"
+                    style="width: 0%"
+                  ></div>
+                </div>
               </div>
-              <div class="optionRow">
-                <label for="threshold">Threshold</label>
-                <input
-                  id="threshold"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value="0.50"
-                />
+
+              <div class="details-list">
+                <div class="detail">
+                  <small>Model:</small> <span id="meta-model">-</span>
+                </div>
+                <div class="detail">
+                  <small>Layer:</small> <span id="meta-layer">-</span>
+                </div>
               </div>
-              <div class="optionRow">
-                <label for="modelSelect">Model</label>
-                <select id="modelSelect" disabled>
-                  <option value="any">Base Model(Testing)</option>
-                </select>
+            </div>
+
+            <div class="options-box">
+              <h3>Configuration</h3>
+              <div class="opt-grid">
+                <div class="opt-group">
+                  <label>Threshold</label>
+                  <input
+                    id="threshold"
+                    type="number"
+                    step="0.05"
+                    min="0"
+                    max="1"
+                    value="0.50"
+                  />
+                </div>
+                <div class="opt-group">
+                  <label>Target</label>
+                  <select id="targetSelect" disabled>
+                    <option>Any Anomaly</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
