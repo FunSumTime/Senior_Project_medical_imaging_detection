@@ -1,8 +1,8 @@
-/model/__pycache__
-/model/pnemonia_models
-/model/pneomia
-/model/venv
-/model/UltrasoundFetusDataset
+/backend/model/__pycache__
+/backend/model/pnemonia_models
+/backend/model/pneomia
+/venv
+/backend/model/UltrasoundFetusDataset
 
 # datasets + large folders
 data/
