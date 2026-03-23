@@ -1,5 +1,5 @@
 import tensorflow as tf
-from config import IMG_SIZE
+from .config import IMG_SIZE
 
 def center_crop(images, labels, crop=0.90):
     # images: (B,224,224,3)

@@ -61,6 +61,8 @@
 
             <div class="btnRow">
               <button id="downloadBtn" disabled>Download Output</button>
+              <button id="showBoxBtn" disabled>Show Boxed Image</button>
+              <button id="showHeatmapBtn" disabled>Show Heatmap Image</button>
             </div>
           </div>
 
@@ -86,8 +88,13 @@
                   min="0"
                   max="1"
                   value="0.50"
-                  disabled
                 />
+              </div>
+              <div class="optionRow">
+                <label for="modelSelect">Model</label>
+                <select id="modelSelect" disabled>
+                  <option value="any">Base Model(Testing)</option>
+                </select>
               </div>
             </div>
           </div>

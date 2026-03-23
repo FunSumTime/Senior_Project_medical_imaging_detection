@@ -9,6 +9,7 @@ SEED = 1337
 # split the train into 80:20
 
 # make two dataset pipelines
+# this would be for loading
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     DATA_ROOT + "/train",

@@ -1,6 +1,6 @@
 import numpy as np
-from load_data import val_ds2
-from model_loader import load_model
+from .load_data import val_ds2
+from .model_loader import load_model
 
 model_cam = load_model("/models/model_cam.keras")
 

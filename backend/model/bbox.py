@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from gradcam import make_gradcam_heatmap
-from load_data import val_ds,val_ds2,val_ds_mask
-from model_loader import load_model
-from config import CLASS_NAMES as class_names, IMG_SIZE
+from .gradcam import make_gradcam_heatmap
+from .load_data import val_ds,val_ds2,val_ds_mask
+from .model_loader import load_model
+from .config import CLASS_NAMES as class_names, IMG_SIZE
 import numpy as np
 
 model_cam = load_model("/models/model_cam.keras")
