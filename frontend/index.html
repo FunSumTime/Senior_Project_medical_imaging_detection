@@ -41,7 +41,7 @@
 
         <div class="previewBlock">
           <div class="imgFrame">
-            <img id="inputPreview" alt="Input preview" />
+            <img id="inputPreview" alt="Input preview" style="display: none" />
             <div id="inputPlaceholder" class="placeholder">
               <p>Waiting for Upload...</p>
             </div>
@@ -64,7 +64,11 @@
         <div class="result-layout">
           <div class="output-container">
             <div class="imgFrame main-result">
-              <img id="outputPreview" alt="Output preview" />
+              <img
+                id="outputPreview"
+                alt="Output preview"
+                style="display: none"
+              />
               <div id="outputPlaceholder" class="placeholder">
                 <p>Awaiting Analysis</p>
               </div>
@@ -116,6 +120,9 @@
                 <div class="detail">
                   <small>Layer:</small> <span id="meta-layer">-</span>
                 </div>
+                <div class="detail">
+                  <small>Stage 2:</small> <span id="meta-stage2">-</span>
+                </div>
               </div>
             </div>
 
@@ -134,13 +141,27 @@
                   />
                 </div>
                 <div class="opt-group">
-                  <label>Target</label>
-                  <select id="targetSelect" disabled>
-                    <option>Any Anomaly</option>
+                  <label>Stage 1 Model</label>
+                  <select id="stage1Model">
+                    <option value="efficientnet_stage1">
+                      EfficientNet Stage 1
+                    </option>
+                    <option value="densenet_stage1">DenseNet Stage 1</option>
+                  </select>
+                </div>
+                <div class="opt-group">
+                  <label>Stage 2 Model</label>
+                  <select id="stage2Model">
+                    <option value="efficientnet_stage2">
+                      EfficientNet Stage 2
+                    </option>
+                    <option value="densenet_stage2">DenseNet Stage 2</option>
                   </select>
                 </div>
               </div>
             </div>
+
+            <pre id="metrics" class="meta"></pre>
           </div>
         </div>
       </section>

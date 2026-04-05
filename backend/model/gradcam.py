@@ -1,48 +1,48 @@
+import numpy as np
 import tensorflow as tf
-# build a model that maps input of top conv to prediction
-# grab the featuer maps and the prediction to do gradients to make a heatmap so
-# it passes this into the model grad_model like a camera saying let me grab that.
-def make_grad_model(model, conv_name):
-    return tf.keras.Model(
-        inputs=model.inputs,
-        outputs=[model.get_layer(conv_name).output, model.output]
+
+# gradcam is  what grabs the featur maps and then displays  what  the model learnded
+def make_gradcam_heatmap(model, image_batch, class_index=None, layer_name="feat_maps"):
+    grad_model = tf.keras.models.Model(
+        inputs=model.input,
+        outputs=[model.get_layer(layer_name).output, model.output]
     )
 
-def make_gradcam_heatmap(images, model, conv_name, class_index=None):
     with tf.GradientTape() as tape:
-            # conv_out is the featuer maps
-    # preds is the probailtes for the clasess [N,P]
-        grad_model = make_grad_model(model, conv_name)
-        conv_out, preds = grad_model(images, training=False)
-              # get the prediction
-    # print(preds)
-    # tape will track this tensor because we wherent able to refrence it
-        tape.watch(conv_out)
- # what class are we looking for
-      # models confidince in th efirst image
+        conv_outputs, predictions = grad_model(image_batch, training=False)
+
         if class_index is None:
-            class_index = tf.argmax(preds[0])
+            class_index = tf.argmax(predictions[0])
 
-        score = preds[0, class_index]
+        class_channel = predictions[:, class_index]
 
-    grads = tape.gradient(score, conv_out)
-  
-  # get the image
+    grads = tape.gradient(class_channel, conv_outputs)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
-    conv_out = conv_out[0]
-  # compute gradeints with featuer maps high means a lot of contribution
+    conv_outputs = conv_outputs[0]
+    heatmap = tf.reduce_sum(conv_outputs * pooled_grads, axis=-1)
+    heatmap = tf.maximum(heatmap, 0)
 
-    grads = grads[0]
-  # turn the wieghts or gradients into one weight per channel
+    max_val = tf.reduce_max(heatmap)
+    if max_val > 0:
+        heatmap = heatmap / max_val
 
-    weights = tf.reduce_mean(grads, axis=(0, 1))
-  # multiply each channel by its weight and sum over them
-    cam = tf.reduce_sum(conv_out * weights, axis=-1)
-  # keep the postive numbers
-    cam = tf.nn.relu(cam)
-  
-  # normalize
+    return heatmap.numpy(), predictions.numpy()
 
-    cam = cam / (tf.reduce_max(cam) + 1e-9)
+# take numbers from  gradcam and blow it  up
+def resize_heatmap_to_image(heatmap, image_np):
+    h, w = image_np.shape[:2]
 
-    return cam.numpy()
+    heatmap_tf = tf.convert_to_tensor(heatmap, dtype=tf.float32)
+    heatmap_tf = tf.expand_dims(heatmap_tf, axis=-1)
+    heatmap_tf = tf.expand_dims(heatmap_tf, axis=0)
+
+    resized = tf.image.resize(heatmap_tf, size=(h, w), method="bilinear")
+    resized = tf.squeeze(resized).numpy()
+
+    resized = np.maximum(resized, 0)
+    max_val = resized.max()
+    if max_val > 0:
+        resized = resized / max_val
+
+    return resized
