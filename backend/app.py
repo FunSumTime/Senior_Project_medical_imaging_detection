@@ -24,6 +24,7 @@ def health():
 @app.post("/api/predict")
 def predict():
     t0 = time.perf_counter()
+    # main route to get image and send it to pipeline
 
     if "image" not in request.files:
         return jsonify({"error": "Missing form-data file field 'image'"}), 400

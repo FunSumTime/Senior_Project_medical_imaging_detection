@@ -1,4 +1,5 @@
 import os
+# My models are  trained on colab so  i will just load them
 
 # -------------------------
 # Model registry
@@ -42,3 +43,5 @@ DEFAULT_THRESHOLD = 0.50
 
 CLASS_NAMES = ["normal", "pneumonia"]
 PNEUMONIA_CLASS_INDEX = 1
+
+# need to just add more vars for differnt models  that can do  differnt classficationns
