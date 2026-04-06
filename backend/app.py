@@ -92,5 +92,12 @@ def predict():
     })
 
 
+import os
+
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    # Render provides a 'PORT' environment variable. 
+    # If it's not there (like on your laptop), it defaults to 5000.
+    port = int(os.environ.get("PORT", 5000))
+    
+    # 0.0.0.0 is required for Render to "see" your app.
+    app.run(host="0.0.0.0", port=port)
