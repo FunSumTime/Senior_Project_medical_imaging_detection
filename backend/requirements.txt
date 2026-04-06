@@ -2,8 +2,8 @@ tensorflow
 numpy
 matplotlib
 pandas
-joblib
 flask
 opencv-python
 flask-cors 
 pillow
+gunicorn
