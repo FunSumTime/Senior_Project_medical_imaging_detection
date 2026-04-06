@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:5000/api/predict";
+const API_URL =
+  "https://senior-project-medical-imaging-detection.onrender.com/api/predict";
 
 // input elements
 const fileInput = document.getElementById("fileInput");

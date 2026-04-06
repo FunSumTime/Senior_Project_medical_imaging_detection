@@ -13,7 +13,13 @@ from model.pipeline import run_two_stage_pipeline
 from model.image_utils import pil_to_base64_png
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "https:/senior-project-medical-imaging-dete.vercel.app" # Your actual Vercel URL
+        ]
+    }
+})
 
 
 @app.get("/api/health")
