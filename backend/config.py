@@ -30,8 +30,8 @@ MODEL_REGISTRY = {
     },
 }
 
-DEFAULT_STAGE1_MODEL = "efficientnet_stage1"
-DEFAULT_STAGE2_MODEL = "efficientnet_stage2"
+DEFAULT_STAGE1_MODEL = "densenet_stage1"
+DEFAULT_STAGE2_MODEL = "densenet_stage2"
 
 IMG_SIZE = (224, 224)
 GRID_ROWS = 4
