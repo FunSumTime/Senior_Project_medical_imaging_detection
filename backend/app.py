@@ -16,8 +16,12 @@ app = Flask(__name__)
 CORS(app, resources={
     r"/api/*": {
         "origins": [
-            "https:/senior-project-medical-imaging-dete.vercel.app" # Your actual Vercel URL
-        ]
+            "https://senior-project-medical-imaging-dete.vercel.app", # Fixed the // and used the name from your logs
+            "http://localhost:5173",  # For local site testing
+            "http://localhost:3000"   # For local React testing
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
     }
 })
 
