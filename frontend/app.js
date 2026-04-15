@@ -70,7 +70,7 @@ function clearAll() {
   outputPlaceholder.style.display = "grid";
 
   fileMeta.textContent = "";
-  metricsBox.textContent = "";
+  renderServerMetrics({});
   latencyEl.textContent = "";
   setStatus("idle", "System Idle");
 
@@ -210,7 +210,15 @@ function updateVisualMetrics(metrics) {
     metrics.detected_label || metrics.predicted_class || "unknown";
 
   if (metrics.anomaly_detected) {
-    badge.textContent = `ANOMALY DETECTED: ${detectedLabel}`;
+    const detectedLabel =
+      metrics.detected_label ||
+      metrics.stage2_predicted_class ||
+      metrics.predicted_class ||
+      "unknown";
+
+    badge.textContent = metrics.anomaly_detected
+      ? `ANOMALY DETECTED: ${detectedLabel}`
+      : "CLEAR / NORMAL";
     badge.className = "badge danger";
     metaDetected.textContent = detectedLabel;
   } else {
@@ -260,7 +268,7 @@ runBtn.addEventListener("click", async () => {
     const data = await res.json();
 
     updateVisualMetrics(data.metrics);
-    metricsBox.textContent = JSON.stringify(data.metrics, null, 2);
+    renderServerMetrics(data.metrics);
 
     const mime = data.result_mime || "image/png";
 
@@ -286,12 +294,79 @@ runBtn.addEventListener("click", async () => {
     setStatus("ok", "Done");
   } catch (err) {
     setStatus("err", "Error");
-    metricsBox.textContent = JSON.stringify(
-      { error: String(err.message || err) },
-      null,
-      2,
-    );
+    renderServerMetrics({ error: String(err.message || err) });
   }
 });
+
+function formatMetricValue(value) {
+  if (value === null || value === undefined) return "-";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) return String(value);
+    return Number.isInteger(value) ? String(value) : value.toFixed(4);
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => formatMetricValue(v)).join(", ");
+  }
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+function prettifyKey(key) {
+  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function renderServerMetrics(metrics) {
+  if (!metrics || Object.keys(metrics).length === 0) {
+    metricsBox.innerHTML = `<div class="server-row">
+      <div class="server-key">Status</div>
+      <div class="server-value">No server response yet.</div>
+    </div>`;
+    return;
+  }
+
+  const preferredOrder = [
+    "anomaly_detected",
+    "detected_label",
+    "predicted_class",
+    "probability",
+    "stage2_ran",
+    "stage2_predicted_class",
+    "stage2_probability",
+    "model",
+    "stage2_model",
+    "cam_layer",
+    "threshold",
+    "inference_ms",
+  ];
+
+  const keys = [
+    ...preferredOrder.filter((k) => k in metrics),
+    ...Object.keys(metrics).filter((k) => !preferredOrder.includes(k)),
+  ];
+
+  metricsBox.innerHTML = keys
+    .map((key) => {
+      const value = formatMetricValue(metrics[key]);
+      const isCodeLike = [
+        "model",
+        "stage2_model",
+        "cam_layer",
+        "predicted_class",
+        "stage2_predicted_class",
+        "detected_label",
+      ].includes(key);
+
+      return `
+        <div class="server-row">
+          <div class="server-key">${prettifyKey(key)}</div>
+          <div class="server-value ${isCodeLike ? "code" : ""}">${value}</div>
+        </div>
+      `;
+    })
+    .join("");
+}
 
 clearAll();
