@@ -7,3 +7,4 @@ opencv-python
 flask-cors 
 pillow
 gunicorn
+huggingface_hub
