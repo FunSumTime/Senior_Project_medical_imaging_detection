@@ -10,9 +10,9 @@ def load_model_by_key(key):
     if key not in _LOADED_MODELS:
         # Determine the filename based on the key
         if key == "efficientnet_stage1":
-            filename = "model1_unfrozen.keras"
+            filename = "model1_frozen_effient_net.keras"
         elif key == "efficientnet_stage2":
-            filename = "model2_unfrozen.keras"
+            filename = "model2_efficent.keras"
         elif key == "densenet_stage1":
             filename = "densenet_model1_unfrozen.keras"
         elif key == "densenet_stage2":
