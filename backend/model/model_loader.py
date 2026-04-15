@@ -14,9 +14,9 @@ def load_model_by_key(key):
         elif key == "efficientnet_stage2":
             filename = "model2_unfrozen.keras"
         elif key == "densenet_stage1":
-            filename = "densenet_model1_unfrozen"
+            filename = "densenet_model1_unfrozen.keras"
         elif key == "densenet_stage2":
-            filename = "densenet_model2_unfrozen"
+            filename = "densenet_model2_unfrozen.keras"
 
         else:
             raise ValueError(f"Unknown model key: {key}")
@@ -33,9 +33,7 @@ def load_model_by_key(key):
 
 from config import MODEL_REGISTRY
 
-# ... (Your existing Hugging Face load_model_by_key code) ...
 
-# ADD THIS MISSING FUNCTION AT THE BOTTOM
 def get_cam_layer(key):
     """Fetches the target CAM layer for Grad-CAM from the registry."""
     if key in MODEL_REGISTRY:
