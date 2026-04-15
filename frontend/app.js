@@ -1,5 +1,4 @@
-const API_URL =
-  "https://senior-project-medical-imaging-detection.onrender.com/api/predict";
+const API_URL = "https://prenatal-twice-deskbound.ngrok-free.dev/api/predict";
 
 // input elements
 const fileInput = document.getElementById("fileInput");
