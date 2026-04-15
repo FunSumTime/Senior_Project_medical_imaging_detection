@@ -30,3 +30,16 @@ def load_model_by_key(key):
         _LOADED_MODELS[key] = tf.keras.models.load_model(model_path)
         
     return _LOADED_MODELS[key]
+
+from config import MODEL_REGISTRY
+
+# ... (Your existing Hugging Face load_model_by_key code) ...
+
+# ADD THIS MISSING FUNCTION AT THE BOTTOM
+def get_cam_layer(key):
+    """Fetches the target CAM layer for Grad-CAM from the registry."""
+    if key in MODEL_REGISTRY:
+        return MODEL_REGISTRY[key].get("cam_layer", "feat_maps")
+    
+    # Fallback just in case
+    return "feat_maps"
