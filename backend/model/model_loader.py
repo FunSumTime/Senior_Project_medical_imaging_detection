@@ -27,7 +27,7 @@ def load_model_by_key(key):
         model_path = hf_hub_download(repo_id=HF_REPO_ID, filename=filename)
         
         # Load the model into memory
-        _LOADED_MODELS[key] = tf.keras.models.load_model(model_path)
+        _LOADED_MODELS[key] = tf.keras.models.load_model(model_path,safe_mode=False)
         
     return _LOADED_MODELS[key]
 
