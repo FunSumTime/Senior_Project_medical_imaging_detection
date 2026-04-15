@@ -174,10 +174,15 @@ def run_two_stage_pipeline(
 
     heatmap2_resized = resize_heatmap_to_image(heatmap2, crop_np)
 
-    # paste stage2 refined heatmap back into original image space
+    # keep only stronger refined areas
+    REFINE_THRESHOLD = 0.45   # tune this later
+
+    heatmap2_masked = np.where(heatmap2_resized >= REFINE_THRESHOLD, heatmap2_resized, 0.0)
+
+    # paste only the strong refined region back into original image space
     full_refined = np.zeros((image_np.shape[0], image_np.shape[1]), dtype=np.float32)
     x1, y1, x2, y2 = expanded_box
-    full_refined[y1:y2, x1:x2] = heatmap2_resized
+    full_refined[y1:y2, x1:x2] = heatmap2_masked
 
     refined_heatmap_img = overlay_heatmap_on_image(image_np, full_refined, alpha=0.50)
 

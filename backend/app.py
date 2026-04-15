@@ -7,6 +7,7 @@ from config import (
     DEFAULT_STAGE1_MODEL,
     DEFAULT_STAGE2_MODEL,
     DEFAULT_THRESHOLD,
+    IMG_SIZE
 )
 from model.model_loader import load_model_by_key, get_cam_layer
 from model.pipeline import run_two_stage_pipeline
@@ -44,9 +45,14 @@ def predict():
         return jsonify({"error": "Empty filename"}), 400
 
     try:
+        # Open the image and convert to RGB
         img = Image.open(f.stream).convert("RGB")
+        
+        # ADD THIS LINE: Resize it to match what DenseNet expects
+        img = img.resize(IMG_SIZE) 
+        
     except Exception as e:
-        return jsonify({"error": f"Could not read image: {e}"}), 400
+        return jsonify({"error": f"Could not read or resize image: {e}"}), 400
 
     stage1_key = request.form.get("stage1_model", DEFAULT_STAGE1_MODEL)
     stage2_key = request.form.get("stage2_model", DEFAULT_STAGE2_MODEL)
@@ -78,11 +84,15 @@ def predict():
     box_b64 = pil_to_base64_png(box_img)
 
     t1 = time.perf_counter()
+    detected_label = "normal"
+    if output["status"]:
+        detected_label = output.get("stage2_predicted_class") or output["predicted_class"]
 
     metrics = {
         "anomaly_detected": output["status"],
         "probability": output["probability"],
         "predicted_class": output["predicted_class"],
+        "detected_label": detected_label,
         "threshold": output["threshold"],
         "model": stage1_key,
         "stage2_model": stage2_key,

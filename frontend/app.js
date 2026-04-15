@@ -181,6 +181,7 @@ function updateVisualMetrics(metrics) {
   const probFill = document.getElementById("prob-fill");
   const probValue = document.getElementById("prob-value");
   const badge = document.getElementById("detection-badge");
+  const metaDetected = document.getElementById("meta-detected");
   const metaModel = document.getElementById("meta-model");
   const metaLayer = document.getElementById("meta-layer");
   const metaStage2 = document.getElementById("meta-stage2");
@@ -190,6 +191,7 @@ function updateVisualMetrics(metrics) {
     probValue.textContent = "0%";
     badge.textContent = "N/A";
     badge.className = "badge";
+    metaDetected.textContent = "-";
     metaModel.textContent = "-";
     metaLayer.textContent = "-";
     metaStage2.textContent = "-";
@@ -204,10 +206,18 @@ function updateVisualMetrics(metrics) {
   else if (prob > 40) probFill.style.background = "var(--accent-orange)";
   else probFill.style.background = "var(--accent-green)";
 
-  badge.textContent = metrics.anomaly_detected
-    ? "ANOMALY DETECTED"
-    : "CLEAR / NORMAL";
-  badge.className = `badge ${metrics.anomaly_detected ? "danger" : "success"}`;
+  const detectedLabel =
+    metrics.detected_label || metrics.predicted_class || "unknown";
+
+  if (metrics.anomaly_detected) {
+    badge.textContent = `ANOMALY DETECTED: ${detectedLabel}`;
+    badge.className = "badge danger";
+    metaDetected.textContent = detectedLabel;
+  } else {
+    badge.textContent = "CLEAR / NORMAL";
+    badge.className = "badge success";
+    metaDetected.textContent = "normal";
+  }
 
   metaModel.textContent = metrics.model || "Unknown";
   metaLayer.textContent = metrics.cam_layer || "-";
