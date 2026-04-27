@@ -11,8 +11,8 @@ To ensure the model's decisions are medically interpretable, the system integrat
 * **Remote Access (ngrok):** Configured to easily tunnel the local application or API to the public internet for remote testing and demonstration.
 
 ## Tech Stack
-* **Language:** Python 3.x
-* **Machine Learning:** [TensorFlow / Keras / PyTorch - *Update with your specific framework*]
+* **Language:** Python 
+* **Machine Learning:** [TensorFlow / Keras]
 * **Computer Vision:** OpenCV, Grad-CAM implementation
 * **Deployment/Tunneling:** ngrok
 
@@ -62,7 +62,7 @@ The current iteration successfully demonstrates pneumonia detection and heatmapp
 
 ## Contributors
 * **Austin Espinoza** - *Lead Developer / Computer Science Senior at Utah Tech University*
-* **Aston** - *Architecture & Heatmap Collaboration*
+* **Aston Haycock** - *Architecture & Heatmap Collaboration*
 
 ## Acknowledgments
 * Utah Tech University Computer Science Department
